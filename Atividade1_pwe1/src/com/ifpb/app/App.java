@@ -7,6 +7,7 @@ package com.ifpb.app;
 
 import com.ifpb.dao.Gerenciar_Cliente;
 import com.ifpb.dao.Gerenciar_Pedido;
+import com.ifpb.factory.DaoFactoryBD;
 import com.ifpb.model.Cliente;
 import com.ifpb.model.Pedido;
 import com.ifpb.model.ativoEnum;
@@ -25,9 +26,8 @@ import java.util.Scanner;
  */
 public class App {
     public static void main(String[] args) {
-        //Gerenciar_Cliente gCliente = new Gerenciar_Cliente();
-        //ArrayList<Cliente> clientes = new ArrayList<>();
         Scanner scan = new Scanner(System.in);
+        Cliente  c;
         
         int opcao,op;
         
@@ -60,7 +60,7 @@ public class App {
                             }
                             case 4 : {
                             //List<Cliente> listar = gCliente.listar();
-                            for(Cliente c : listarClientes() ){
+                            for(Cliente c : listarClientes()){
                                 System.out.println("Cliente :" + c.toString());
                             }
                             break;
@@ -73,7 +73,7 @@ public class App {
                     break;
                     }
                 case 3: {
-                       Cliente c = login();
+                       c = login();
                        if(c != null){
                             do{
                                 System.out.println("1 - INSERIR NOVO PEDIDO");
@@ -95,7 +95,7 @@ public class App {
                                     removerPedido();
                                 }
                                 case 4 :{
-                                    for(Pedido p : listarPedidos()){
+                                    for(Pedido p : listarPedidos(c.getId())){
                                         System.out.println("Pedido :"+p.toString());
                                     }
                                 }
@@ -118,7 +118,7 @@ public class App {
       System.out.println("DIGITE O SEU SALDO :");
       cliente.setSaldo(s.nextFloat());
       cliente.setStatus(ativoEnum.ATIVO);
-       new Gerenciar_Cliente().inserir(cliente);
+      new DaoFactoryBD().criaClienteDao().inserir(cliente);
     }
     
     public static void editarCliente(){
@@ -134,7 +134,7 @@ public class App {
     }
     
     public static List<Cliente> listarClientes(){
-        List<Cliente> clientes = new Gerenciar_Cliente().listar();
+        List<Cliente> clientes = new DaoFactoryBD().criaClienteDao().listar();
         return clientes;
     }        
     public static void removeCliente(){
@@ -142,7 +142,7 @@ public class App {
         System.out.println("DIGITE O ID DO CLIENTE:");
         int id = s.nextInt();
         
-        new Gerenciar_Cliente().excluir(id);
+        new DaoFactoryBD().criaClienteDao().excluir(id);
     }
    
     public static void insirPedido(Cliente c){
@@ -152,24 +152,31 @@ public class App {
         pedido.setValor(s.nextFloat());
         pedido.setCliente(c.getId());
         pedido.setData(LocalDate.now());
-        new Gerenciar_Pedido().inserir(pedido);
+        new DaoFactoryBD().criaPedidoDao().inserir(pedido);
     }
     public static void editarPedido(){
         Scanner s = new Scanner(System.in);
         Pedido pedido = new Pedido();
-        System.out.println("DIGITE O VALOR DO PEDIDO :");
+        System.out.println("DIGITE O NOVO VALOR DO PEDIDO :");
         pedido.setValor(s.nextFloat());
-        new Gerenciar_Pedido().editar(pedido);
+        new DaoFactoryBD().criaPedidoDao().editar(pedido);
     }
     public static void removerPedido(){
        Scanner s = new Scanner(System.in);
-       System.out.println("DIGITE O VALOR DO PEDIDO :"); 
+       System.out.println("DIGITE O VALOR O ID DO PEDIDO :"); 
         int id = s.nextInt();
-        new Gerenciar_Pedido().excluir(id);
+        new DaoFactoryBD().criaPedidoDao().excluir(id);
     }
-    public static List<Pedido> listarPedidos(){
-      List<Pedido> pedidos = new Gerenciar_Pedido().listar();
-      return pedidos;
+    public static List<Pedido> listarPedidos(int idCliente){
+      System.out.println(idCliente);
+      List<Pedido> pedidosUser = new ArrayList<>();
+      List<Pedido> pedidos = new DaoFactoryBD().criaPedidoDao().listar();
+      for(int i=0;i<pedidos.size();i++){
+          if(pedidos.get(i).getCliente() == idCliente){
+              pedidosUser.add(pedidos.get(i));
+          }
+      }
+      return pedidosUser;
     }
     public static Cliente login(){
         Scanner s = new Scanner(System.in);
