@@ -60,9 +60,9 @@ public class App {
                             }
                             case 4 : {
                             //List<Cliente> listar = gCliente.listar();
-                            for(Cliente c : listarClientes()){
-                                System.out.println("Cliente :" + c.toString());
-                            }
+                            for(Cliente cliente : listarClientes()){
+                                        System.out.println(cliente.toString());
+                                    }
                             break;
                            }
                         }
@@ -121,16 +121,27 @@ public class App {
       new DaoFactoryBD().criaClienteDao().inserir(cliente);
     }
     
-    public static void editarCliente(){
+    public static boolean editarCliente(){
       Scanner s = new Scanner(System.in);
+      List<Cliente> clientes = listarClientes();
       Cliente cliente = new Cliente();
-      System.out.println("DIGITE SEU NOME :");
-      cliente.setNome(s.next());
-      System.out.println("DIGITE O NUMERO DO SEU DOCUMENTO :");
-      cliente.setDocumento(s.next());
-      System.out.println("DIGITE O SEU SALDO :");
-      cliente.setSaldo(s.nextFloat());
-      cliente.setStatus(ativoEnum.ATIVO);
+      System.out.println("DIGITE O SEU DOCUMENTO:");
+      String documento = s.next();
+      for(int i=0;i<clientes.size();i++){
+          if(clientes.get(i).getDocumento().equals(documento)){
+            System.out.println("DIGITE SEU NOME :");
+            cliente.setNome(s.next());
+            System.out.println("DIGITE O NUMERO DO SEU DOCUMENTO :");
+            cliente.setDocumento(s.next());
+            System.out.println("DIGITE O SEU SALDO :");
+            cliente.setSaldo(s.nextFloat());
+            cliente.setStatus(ativoEnum.ATIVO);
+            new DaoFactoryBD().criaClienteDao().inserir(cliente);
+            return true;
+          }
+      }
+      System.out.println("CLIENTE INESISTENTE!");
+      return false;
     }
     
     public static List<Cliente> listarClientes(){
@@ -143,8 +154,7 @@ public class App {
         int id = s.nextInt();
         
         new DaoFactoryBD().criaClienteDao().excluir(id);
-    }
-   
+    }   
     public static void insirPedido(Cliente c){
       Scanner s = new Scanner(System.in);
       Pedido pedido = new Pedido();
