@@ -136,7 +136,7 @@ public class App {
             System.out.println("DIGITE O SEU SALDO :");
             cliente.setSaldo(s.nextFloat());
             cliente.setStatus(ativoEnum.ATIVO);
-            new DaoFactoryBD().criaClienteDao().inserir(cliente);
+            new DaoFactoryBD().criaClienteDao().editar(cliente);
             return true;
           }
       }

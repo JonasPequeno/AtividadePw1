@@ -47,7 +47,7 @@ public class Gerenciar_Pedido implements PedidoDaoInterface{
             String sqlDelete =("DELETE FROM PEDIDO WHERE id = ?") ;
             PreparedStatement state = con.prepareStatement(sqlDelete);
             state.setInt(1,id);
-            state.execute(sqlDelete);
+            state.execute();
             state.close();
             con.close();
         } catch (SQLException ex) {

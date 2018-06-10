@@ -52,7 +52,7 @@ public class Gerenciar_Cliente implements ClienteDaoInterface{
             con.close();
             
         } catch (SQLException ex) {
-            System.out.println("ERRO AO EXCLUIR O CLIENTE :" + ex.getMessage());
+            System.out.println("ERRO AO EXCLUIR O CLIENTE, VOCÊ AINDA POSSUI PEDIDOS :");
             return false;
         }
         return true;      
@@ -60,18 +60,14 @@ public class Gerenciar_Cliente implements ClienteDaoInterface{
     }
 
     @Override
-    public boolean editar(Cliente c) {
+    public boolean editar(Cliente cliente) {
         try {
             Connection con = Conexao.getConnection();
-            String updateSql = "UPDATE CLIENTE SET NOME = ?, DOCUMENTO = ?, SALDO = ?, STATUS = ?"
-                    + "WHERE ID = ?";
-            PreparedStatement state = con.prepareStatement(updateSql);
-            state.setString(1,c.getNome());
-            state.setString(2,c.getDocumento());
-            state.setFloat(3,c.getSaldo());
-            state.setString(4,c.getStatus().toString());
-            state.setInt(5, c.getId());
-            state.execute();
+            String sql = String.format("UPDATE Cliente SET Nome = %s,Documento = %s ,Saldo = %f, status = %s " +
+                    "WHERE Id = %d)", cliente.getNome(), cliente.getDocumento(), cliente.getSaldo(),
+                    cliente.getStatus().toString(), cliente.getId());
+            Statement state = con.createStatement();
+            state.executeUpdate(sql);
             state.close();
             con.close();
         } catch (SQLException ex) {
